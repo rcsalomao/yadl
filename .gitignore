@@ -36,3 +36,5 @@ build/
 
 # specific files
 src/main.cpp
+compile_commands.json
+run.sh
