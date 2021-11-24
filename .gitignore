@@ -32,10 +32,9 @@
 *.app
 
 # folders
-build/
+../../../../arquv/buildFiles/yadl/build/
 
 # specific files
-build
 src/main.cpp
 compile_commands.json
 run.sh
