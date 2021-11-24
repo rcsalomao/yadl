@@ -32,7 +32,7 @@
 *.app
 
 # specific files
-/build
-src/main.cpp
-compile_commands.json
 run.sh
+src/main.cpp
+build
+compile_commands.json
