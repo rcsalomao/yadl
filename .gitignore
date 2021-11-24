@@ -31,8 +31,8 @@
 *.out
 *.app
 
+# folders
+build/
+
 # specific files
-run.sh
-src/main.cpp
-build
 compile_commands.json
