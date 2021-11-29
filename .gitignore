@@ -33,6 +33,3 @@
 
 # folders
 build/
-
-# specific files
-compile_commands.json
