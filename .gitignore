@@ -1,11 +1,2 @@
-# ignore everything a priori
-./*
-
-# whitelist what I desire
-!./.git/*
-!./.gitignore
-!./src/*
-!./run.sh
-!./LICENSE
-!./README.md
-!./meson.build
+build/
+compilecommands/
