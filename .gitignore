@@ -1,3 +1,6 @@
-build
+# folders
 build/
-compilecommands/
+
+# symlinks
+build
+compile_commands.json
