@@ -18,23 +18,19 @@ struct RV
     virtual double mean() = 0;
     virtual double stdv()
     {
-        printf("Function 'stdv()' not implemented on concrete type.\n");
-        exit(2);
+        return std::numeric_limits<double>::quiet_NaN();
     }
     virtual double pdf(double)
     {
-        printf("Function 'pdf(double)' not implemented on concrete type.\n");
-        exit(2);
+        return std::numeric_limits<double>::quiet_NaN();
     }
     virtual double cdfP(double)
     {
-        printf("Function 'cdfP(double)' not implemented on concrete type.\n");
-        exit(2);
+        return std::numeric_limits<double>::quiet_NaN();
     }
     virtual double cdfPinv(double)
     {
-        printf("Function 'cdfPinv(double)' not implemented on concrete type.\n");
-        exit(2);
+        return std::numeric_limits<double>::quiet_NaN();
     }
 };
 
@@ -61,18 +57,6 @@ struct Deterministic : RV
     double stdv() override
     {
         return 0.0;
-    }
-    double pdf(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfP(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfPinv(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
     }
 };
 
@@ -376,18 +360,6 @@ struct LevySaS : RV
             return std::numeric_limits<double>::infinity();
         }
     }
-    double pdf(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfP(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfPinv(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
 };
 
 struct LevySkew : RV
@@ -453,18 +425,6 @@ struct LevySkew : RV
         } else {
             return std::numeric_limits<double>::infinity();
         }
-    }
-    double pdf(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfP(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
-    }
-    double cdfPinv(double) override
-    {
-        return std::numeric_limits<double>::quiet_NaN();
     }
 };
 

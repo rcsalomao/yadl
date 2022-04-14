@@ -6,6 +6,8 @@ int main() {
 
     std::unique_ptr<yadl::RV> rv = std::make_unique<yadl::Poisson>(5.7);
     // std::unique_ptr<yadl::Normal> rv = std::make_unique<yadl::Normal>(gsl_rng_default, 5, 1);
+    // std::unique_ptr<yadl::RV> rv = std::make_unique<yadl::UniformInt>();
+
     double samp = rv->sample();
     printf("%.2f\n", samp);
     printf("%.2f\n", rv->mean());
