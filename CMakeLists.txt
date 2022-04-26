@@ -1,5 +1,4 @@
-# Works with 3.11 and tested through 3.23
-cmake_minimum_required(VERSION 3.11...3.23)
+cmake_minimum_required(VERSION 3.10...3.23)
 
 project(
     yadl
@@ -36,6 +35,6 @@ target_compile_options(
 target_link_libraries(
     main
     PRIVATE
-    -lgslcblas
     -lgsl
+    -lgslcblas
 )

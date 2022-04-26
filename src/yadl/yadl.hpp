@@ -531,7 +531,7 @@ struct GeneralDiscrete : RV
     {
         double num{0.0};
         double den{0.0};
-        for (unsigned int i=0; i<m_P.size(); i++) {
+        for (size_t i=0; i<m_P.size(); i++) {
             num += m_P[i]*i;
             den += m_P[i];
         }
@@ -556,7 +556,7 @@ struct UniformInt : RV
         range += 1;
         std::vector<double> P;
         P.reserve(range);
-        for (int i=0;i<range;i++) {
+        for (int i=0; i<range; i++) {
             P.push_back(1.0);
         }
         m_P = P;
@@ -571,7 +571,7 @@ struct UniformInt : RV
         range += 1;
         std::vector<double> P;
         P.reserve(range);
-        for (int i=0;i<range;i++) {
+        for (int i=0; i<range; i++) {
             P.push_back(1.0);
         }
         m_P = P;
