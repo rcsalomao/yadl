@@ -12,8 +12,8 @@ namespace yadl
 struct RV
 {
     virtual ~RV() = default;
-    virtual void setRNG(gsl_rng*) = 0;
-    virtual void setSeed(unsigned long int) = 0;
+    virtual void set_rng(gsl_rng*) = 0;
+    virtual void set_seed(unsigned long int) = 0;
     virtual double sample() = 0;
     virtual double mean() = 0;
     virtual double stdv()
@@ -24,11 +24,11 @@ struct RV
     {
         return std::numeric_limits<double>::quiet_NaN();
     }
-    virtual double cdfP(double)
+    virtual double cdf_P(double)
     {
         return std::numeric_limits<double>::quiet_NaN();
     }
-    virtual double cdfPinv(double)
+    virtual double cdf_P_inv(double)
     {
         return std::numeric_limits<double>::quiet_NaN();
     }
@@ -40,9 +40,9 @@ struct Deterministic : RV
 
     Deterministic(double value=42.0): m_value(value) { }
     ~Deterministic() { }
-    void setRNG(gsl_rng*) override { }
-    void setSeed(unsigned long int) override { }
-    void setValues(double value)
+    void set_rng(gsl_rng*) override { }
+    void set_seed(unsigned long int) override { }
+    void set_values(double value)
     {
         m_value = value;
     }
@@ -80,16 +80,16 @@ struct Normal : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double mu, double sigma)
+    void set_values(double mu, double sigma)
     {
         m_mu = mu;
         m_sigma = sigma;
@@ -110,11 +110,11 @@ struct Normal : RV
     {
         return gsl_ran_gaussian_pdf((x-m_mu),m_sigma);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_gaussian_P((x-m_mu),m_sigma);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return m_mu + gsl_cdf_gaussian_Pinv(P,m_sigma);
     }
@@ -140,16 +140,16 @@ struct Lognormal : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double zeta, double sigma)
+    void set_values(double zeta, double sigma)
     {
         m_zeta = zeta;
         m_sigma = sigma;
@@ -170,11 +170,11 @@ struct Lognormal : RV
     {
         return gsl_ran_lognormal_pdf(x,m_zeta,m_sigma);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_lognormal_P(x,m_zeta,m_sigma);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_lognormal_Pinv(P,m_zeta,m_sigma);
     }
@@ -200,16 +200,16 @@ struct Gumbel : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b)
+    void set_values(double a, double b)
     {
         m_a = a;
         m_b = b;
@@ -231,11 +231,11 @@ struct Gumbel : RV
     {
         return gsl_ran_gumbel1_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_gumbel1_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_gumbel1_Pinv(P,m_a,m_b);
     }
@@ -261,16 +261,16 @@ struct Weibull : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b)
+    void set_values(double a, double b)
     {
         m_a = a;
         m_b = b;
@@ -291,11 +291,11 @@ struct Weibull : RV
     {
         return gsl_ran_weibull_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_weibull_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_weibull_Pinv(P,m_a,m_b);
     }
@@ -324,16 +324,16 @@ struct LevySaS : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double mu, double c, double alpha)
+    void set_values(double mu, double c, double alpha)
     {
         m_mu = mu;
         m_c = c;
@@ -388,16 +388,16 @@ struct LevySkew : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double mu, double c, double alpha, double beta)
+    void set_values(double mu, double c, double alpha, double beta)
     {
         m_mu = mu;
         m_c = c;
@@ -450,16 +450,16 @@ struct UniformReal : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b)
+    void set_values(double a, double b)
     {
         m_a = a;
         m_b = b;
@@ -481,11 +481,11 @@ struct UniformReal : RV
     {
         return gsl_ran_flat_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_flat_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_flat_Pinv(P,m_a,m_b);
     }
@@ -514,12 +514,12 @@ struct GeneralDiscrete : RV
         gsl_rng_free(m_rng);
         gsl_ran_discrete_free(m_table);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
@@ -582,12 +582,12 @@ struct UniformInt : RV
         gsl_rng_free(m_rng);
         gsl_ran_discrete_free(m_table);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
@@ -622,16 +622,16 @@ struct Exponential : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double mu)
+    void set_values(double mu)
     {
         m_mu = mu;
         assert(m_mu > 0.0);
@@ -652,11 +652,11 @@ struct Exponential : RV
     {
         return gsl_ran_exponential_pdf(x,m_mu);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_exponential_P(x,m_mu);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_exponential_Pinv(P,m_mu);
     }
@@ -686,16 +686,16 @@ struct Gamma : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b) {
+    void set_values(double a, double b) {
         m_a = a;
         m_b = b;
         assert(m_a > 0.0);
@@ -717,11 +717,11 @@ struct Gamma : RV
     {
         return gsl_ran_gamma_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_gamma_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_gamma_Pinv(P,m_a,m_b);
     }
@@ -751,16 +751,16 @@ struct Beta : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b) {
+    void set_values(double a, double b) {
         m_a = a;
         m_b = b;
         assert(m_a > 0.0);
@@ -782,11 +782,11 @@ struct Beta : RV
     {
         return gsl_ran_beta_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_beta_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_beta_Pinv(P,m_a,m_b);
     }
@@ -820,16 +820,16 @@ struct ScaledBeta : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b, double infLimit, double supLimit)
+    void set_values(double a, double b, double infLimit, double supLimit)
     {
         m_a = a;
         m_b = b;
@@ -858,14 +858,14 @@ struct ScaledBeta : RV
         assert(x<1.0);
         return gsl_ran_beta_pdf(x,m_a,m_b);
     }
-    double cdfP(double xScaled) override
+    double cdf_P(double xScaled) override
     {
         double x = (xScaled-m_infLimit)/(m_supLimit-m_infLimit);
         assert(x>0.0);
         assert(x<1.0);
         return gsl_cdf_beta_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return m_infLimit + (m_supLimit-m_infLimit)*gsl_cdf_beta_Pinv(P,m_a,m_b);
     }
@@ -892,16 +892,16 @@ struct Poisson : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double mu)
+    void set_values(double mu)
     {
         m_mu = mu;
         assert(m_mu > 0.0);
@@ -922,7 +922,7 @@ struct Poisson : RV
     {
         return gsl_ran_poisson_pdf(x,m_mu);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_poisson_P(x,m_mu);
     }
@@ -951,16 +951,16 @@ struct Bernoulli : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double p)
+    void set_values(double p)
     {
         m_p = p;
         assert(m_p >= 0.0);
@@ -1010,16 +1010,16 @@ struct Binomial : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double p, int n)
+    void set_values(double p, int n)
     {
         m_p = p;
         m_n = n;
@@ -1043,7 +1043,7 @@ struct Binomial : RV
     {
         return gsl_ran_binomial_pdf(x,m_p,m_n);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_binomial_P(x,m_p,m_n);
     }
@@ -1073,16 +1073,16 @@ struct Pareto : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double a, double b)
+    void set_values(double a, double b)
     {
         m_a = a;
         m_b = b;
@@ -1115,11 +1115,11 @@ struct Pareto : RV
     {
         return gsl_ran_pareto_pdf(x,m_a,m_b);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_pareto_P(x,m_a,m_b);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_pareto_Pinv(P,m_a,m_b);
     }
@@ -1146,16 +1146,16 @@ struct ChiSquared : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double nu)
+    void set_values(double nu)
     {
         m_nu = nu;
         assert(m_nu > 0.0);
@@ -1176,11 +1176,11 @@ struct ChiSquared : RV
     {
         return gsl_ran_chisq_pdf(x,m_nu);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_chisq_P(x,m_nu);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_chisq_Pinv(P,m_nu);
     }
@@ -1207,16 +1207,16 @@ struct TStudent : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double nu)
+    void set_values(double nu)
     {
         m_nu = nu;
         assert(m_nu > 0.0);
@@ -1243,11 +1243,11 @@ struct TStudent : RV
     {
         return gsl_ran_tdist_pdf(x,m_nu);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_tdist_P(x,m_nu);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_tdist_Pinv(P,m_nu);
     }
@@ -1277,16 +1277,16 @@ struct FDistribution : RV
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) override
+    void set_rng(gsl_rng* newRNG) override
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed) override
+    void set_seed(unsigned long int seed) override
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(double nu1, double nu2)
+    void set_values(double nu1, double nu2)
     {
         m_nu1 = nu1;
         m_nu2 = nu2;
@@ -1319,11 +1319,11 @@ struct FDistribution : RV
     {
         return gsl_ran_fdist_pdf(x,m_nu1,m_nu2);
     }
-    double cdfP(double x) override
+    double cdf_P(double x) override
     {
         return gsl_cdf_fdist_P(x,m_nu1,m_nu2);
     }
-    double cdfPinv(double P) override
+    double cdf_P_inv(double P) override
     {
         return gsl_cdf_fdist_Pinv(P,m_nu1,m_nu2);
     }
@@ -1342,12 +1342,12 @@ struct Shuffler
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG)
+    void set_rng(gsl_rng* newRNG)
     {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed)
+    void set_seed(unsigned long int seed)
     {
         gsl_rng_set(m_rng, seed);
     }
@@ -1402,15 +1402,16 @@ struct SphericalVectors
     {
         gsl_rng_free(m_rng);
     }
-    void setRNG(gsl_rng* newRNG) {
+    void set_rng(gsl_rng* newRNG)
+    {
         gsl_rng_free(m_rng);
         m_rng = newRNG;
     }
-    void setSeed(unsigned long int seed)
+    void set_seed(unsigned long int seed)
     {
         gsl_rng_set(m_rng, seed);
     }
-    void setValues(size_t nd) {
+    void set_values(size_t nd) {
         m_nd = nd;
     }
     std::vector<double> sample()
