@@ -10,13 +10,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(
     main
-    ./src/main.cpp
+    example/main.cpp
 )
 
 target_include_directories(
     main
     PRIVATE
-    ./src/yadl
+    src/
 )
 
 target_compile_options(
