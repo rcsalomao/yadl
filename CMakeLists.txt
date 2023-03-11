@@ -25,11 +25,9 @@ target_compile_options(
     -fdiagnostics-color=always
     -Wall
     -Wextra
-    -std=c++2a
-    -fconcepts
+    -std=c++20
     -O3
     -march=native
-    -pipe
 )
 
 target_link_libraries(
