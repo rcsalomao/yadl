@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11...3.23)
+cmake_minimum_required(VERSION 3.11...3.31)
 
 project(
     yadl
@@ -25,7 +25,7 @@ target_compile_options(
     -fdiagnostics-color=always
     -Wall
     -Wextra
-    -std=c++20
+    -std=c++17
     -O3
     -march=native
 )
