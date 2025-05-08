@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11...3.31)
+cmake_minimum_required(VERSION 4.0)
 
 project(
     yadl
@@ -7,6 +7,7 @@ project(
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
 
 add_executable(
     main
@@ -25,7 +26,6 @@ target_compile_options(
     -fdiagnostics-color=always
     -Wall
     -Wextra
-    -std=c++17
     -O3
     -march=native
 )
