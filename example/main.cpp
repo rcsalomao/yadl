@@ -31,15 +31,7 @@ int main() {
 
     {
         std::cout << std::endl;
-        auto f = [rng](int n_side) {
-            std::cout << "From f(12): " << yadl::Dice(n_side).sample(rng)
-                      << std::endl;
-        };
-        f(12);
-        std::cout << "yadl::Dice(12).sample(rng): "
-                  << yadl::Dice(12).sample(rng) << std::endl;
-        std::cout << "yadl::Dice(12).sample(rng): "
-                  << yadl::Dice(12).sample(rng) << std::endl;
+        printf("yadl::Dice(12).sample(rng): %i\n", yadl::Dice(12).sample(rng));
     }
 
     {
@@ -61,19 +53,19 @@ int main() {
         std::cout << std::endl;
         printf("yadl::Normal rv = yadl::Normal(15, 5);\n");
         yadl::Normal rv = yadl::Normal(15, 5);
-        printf("double samp = rv.sample(rng);\n");
-        double samp = rv.sample(rng);
+        printf("double sample = rv.sample(rng);\n");
+        double sample = rv.sample(rng);
         printf("rv.mean(): %.2f\n", rv.mean());
         printf("rv.stdv(): %.2f\n", rv.stdv());
         printf("rv.pdf(rv.mean()): %.2f\n", rv.pdf(rv.mean()));
         printf("rv.cdf_P(33.60): %.4f\n", rv.cdf_P(33.60));
         printf("rv.cdf_P(rv.mean()): %.2f\n", rv.cdf_P(rv.mean()));
         printf("rv.cdf_P_inv(0.9999): %.2f\n", rv.cdf_P_inv(0.9999));
-        printf("samp: %.3f\n", samp);
-        printf("rv.pdf(): %.3f\n", rv.pdf(samp));
-        printf("rv.cdf_P(samp): %.3f\n", rv.cdf_P(samp));
-        printf("rv.cdf_P_inv(rv.cdf_P(samp)): %.3f\n",
-               rv.cdf_P_inv(rv.cdf_P(samp)));
+        printf("sample: %.3f\n", sample);
+        printf("rv.pdf(): %.3f\n", rv.pdf(sample));
+        printf("rv.cdf_P(sample): %.3f\n", rv.cdf_P(sample));
+        printf("rv.cdf_P_inv(rv.cdf_P(sample)): %.3f\n",
+               rv.cdf_P_inv(rv.cdf_P(sample)));
     }
 
     return 0;

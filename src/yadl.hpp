@@ -5,6 +5,7 @@
 #include <gsl/gsl_sf.h>
 
 #include <cassert>
+#include <cmath>
 #include <random>
 #include <ranges>
 #include <type_traits>
@@ -383,7 +384,7 @@ class UniformInt : public RV {
     // dtor
     ~UniformInt() { gsl_ran_discrete_free(m_table); }
     double sample(const RNG& rng) override {
-        return m_a + gsl_ran_discrete(rng.get(), m_table);
+        return round(m_a + gsl_ran_discrete(rng.get(), m_table));
     }
     double mean() override { return (m_b + m_a) / 2.0; }
     double stdv() override { return sqrt((pow(m_P.size(), 2) - 1) / 12.0); }
@@ -542,7 +543,7 @@ class Poisson : public RV {
         assert(m_mu > 0.0);
     }
     double sample(const RNG& rng) override {
-        return gsl_ran_poisson(rng.get(), m_mu);
+        return round(gsl_ran_poisson(rng.get(), m_mu));
     }
     double mean() override { return m_mu; }
     double stdv() override { return sqrt(m_mu); }
@@ -568,7 +569,7 @@ class Bernoulli : public RV {
         assert(m_p <= 1.0);
     }
     double sample(const RNG& rng) override {
-        return gsl_ran_bernoulli(rng.get(), m_p);
+        return round(gsl_ran_bernoulli(rng.get(), m_p));
     }
     double mean() override { return m_p; }
     double stdv() override { return sqrt(m_p * (1.0 - m_p)); }
@@ -600,7 +601,7 @@ class Binomial : public RV {
         assert(m_n >= 0);
     }
     double sample(const RNG& rng) override {
-        return gsl_ran_binomial(rng.get(), m_p, m_n);
+        return round(gsl_ran_binomial(rng.get(), m_p, m_n));
     }
     double mean() override { return m_n * m_p; }
     double stdv() override { return sqrt(m_n * m_p * (1.0 - m_p)); }
@@ -746,7 +747,7 @@ struct Dice {
     UniformInt m_unifInt;
 
     Dice(int nSides) : m_nSides{nSides}, m_unifInt{1, m_nSides} {};
-    double sample(const RNG& rng) { return m_unifInt.sample(rng); }
+    int sample(const RNG& rng) { return round(m_unifInt.sample(rng)); }
     double mean() { return m_unifInt.mean(); }
 };
 

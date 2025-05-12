@@ -24,63 +24,116 @@ All random variables objects derive from RV parent class.
 The RV parent class has the following structure:
 
 ```cpp
-struct RV {
-  virtual ~RV() = default;
-  virtual void set_rng(gsl_rng *) = 0;
-  virtual void set_seed(unsigned long int) = 0;
-  virtual double sample() = 0;
-  virtual double mean() = 0;
-  virtual double stdv() { return std::numeric_limits<double>::quiet_NaN(); }
-  virtual double pdf(double) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-  virtual double cdf_P(double) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-  virtual double cdf_P_inv(double) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
+class RV {
+   public:
+    virtual double sample(const RNG&) = 0;
+    virtual double mean() = 0;
+    virtual double stdv() = 0;
+    virtual double pdf(double) = 0;
+    virtual double cdf_P(double) = 0;
+    virtual double cdf_P_inv(double) = 0;
+    virtual ~RV() = default;
 };
 ```
 
 This way, any random variable derived has at least the most used (in my experience) methods as `sample()`, `mean()`, `stdv()`, `pdf(double)`, `cdf_P(double)`, `cdf_P_inv(double)`.
+
+
+For the sampling process, a random number generator (`rng`) is necessary.
+Therefore, this library provides a class to encapsulate the `rng` objects provided by GSL.
+The `RNG` class has the following structure, with both moving operations deleted:
+
+```cpp
+class RNG {
+    gsl_rng* m_rng;
+
+   public:
+    // ctor
+    RNG(unsigned long int seed = std::random_device()()) {
+        m_rng = gsl_rng_alloc(gsl_rng_ranlxd2);
+        gsl_rng_set(m_rng, seed);
+    };
+    RNG(const gsl_rng_type* rng_type,
+        unsigned long int seed = std::random_device()()) {
+        m_rng = gsl_rng_alloc(rng_type);
+        gsl_rng_set(m_rng, seed);
+    };
+    // copy
+    RNG(const RNG& other_rng) { m_rng = gsl_rng_clone(other_rng.get()); };
+    RNG& operator=(const RNG& other_rng) {
+        gsl_rng_memcpy(m_rng, other_rng.get());
+        return *this;
+    };
+    // move
+    RNG(RNG&& other_rng) = delete;
+    RNG& operator=(RNG&& other_rng) = delete;
+    // dtor
+    ~RNG() { gsl_rng_free(m_rng); };
+    // getter
+    gsl_rng* get() const { return m_rng; };
+};
+```
 
 ## Examples
 
 Next is shown some examples on how to use this lib:
 
 ```cpp
-#include "yadl.hpp"
-#include <memory>
-
 int main() {
-  std::vector<std::unique_ptr<yadl::RV>> vec;
-  vec.push_back(std::make_unique<yadl::UniformInt>(23, 32));
-  vec.push_back(std::make_unique<yadl::Poisson>(4.7));
-  vec.push_back(std::make_unique<yadl::Normal>(5, 1));
-  vec.push_back(std::make_unique<yadl::Normal>(gsl_rng_mt19937, 5, 1));
-  vec.push_back(std::make_unique<yadl::Weibull>());
-  for (auto &random_var : vec) {
-    printf("sample: %.3f\n", random_var->sample());
-    printf("mean: %.3f\n", random_var->mean());
-    printf("stdv: %.3f\n", random_var->stdv());
-  }
+    yadl::RNG rng{};
+    {
+        std::cout << std::endl;
+        printf("rng name: %s\n", gsl_rng_name(rng.get()));
+    }
 
-  yadl::Normal rv = yadl::Normal(gsl_rng_default, 15, 5, 1);
-  double samp = rv.sample();
-  printf("%s\n", gsl_rng_name(rv.m_rng));
-  printf("%.2f\n", rv.mean());
-  printf("%.2f\n", rv.stdv());
-  printf("%.2f\n", rv.pdf(rv.mean()));
-  printf("%.2f\n", rv.cdf_P(99));
-  printf("%.2f\n", rv.cdf_P(rv.mean()));
-  printf("%.2f\n", rv.cdf_P_inv(0.9999));
-  printf("%.3f\n", samp);
-  printf("%.3f\n", rv.pdf(samp));
-  printf("%.3f\n", rv.cdf_P(samp));
-  printf("%.3f\n", rv.cdf_P_inv(rv.cdf_P(samp)));
+    {
+        std::cout << std::endl;
+        std::vector v{1, 2, 3, 4, 5};
+        std::cout << "v: " << stringify(v) << std::endl;
+        yadl::shuffle(rng, v);
+        std::cout << "shuffled v: " << stringify(v) << std::endl;
+    }
 
-  return 0;
+    {
+        std::cout << std::endl;
+        printf("yadl::Dice(12).sample(rng): %i\n", yadl::Dice(12).sample(rng));
+    }
+
+    {
+        std::cout << std::endl;
+        std::vector<std::unique_ptr<yadl::RV>> v_rv;
+        v_rv.push_back(std::make_unique<yadl::UniformInt>(23, 32));
+        v_rv.push_back(std::make_unique<yadl::Poisson>(4.7));
+        v_rv.push_back(std::make_unique<yadl::Normal>(5, 1));
+        v_rv.push_back(std::make_unique<yadl::Weibull>());
+        for (auto [i, rv] : v_rv | std::ranges::views::enumerate) {
+            printf("rv[%i]->sample(rng): %.3f\n", static_cast<int>(i),
+                   rv->sample(rng));
+            printf("rv[%i]->mean(): %.3f\n", static_cast<int>(i), rv->mean());
+            printf("rv[%i]->stdv(): %.3f\n", static_cast<int>(i), rv->stdv());
+        }
+    }
+
+    {
+        std::cout << std::endl;
+        printf("yadl::Normal rv = yadl::Normal(15, 5);\n");
+        yadl::Normal rv = yadl::Normal(15, 5);
+        printf("double sample = rv.sample(rng);\n");
+        double sample = rv.sample(rng);
+        printf("rv.mean(): %.2f\n", rv.mean());
+        printf("rv.stdv(): %.2f\n", rv.stdv());
+        printf("rv.pdf(rv.mean()): %.2f\n", rv.pdf(rv.mean()));
+        printf("rv.cdf_P(33.60): %.4f\n", rv.cdf_P(33.60));
+        printf("rv.cdf_P(rv.mean()): %.2f\n", rv.cdf_P(rv.mean()));
+        printf("rv.cdf_P_inv(0.9999): %.2f\n", rv.cdf_P_inv(0.9999));
+        printf("sample: %.3f\n", sample);
+        printf("rv.pdf(): %.3f\n", rv.pdf(sample));
+        printf("rv.cdf_P(sample): %.3f\n", rv.cdf_P(sample));
+        printf("rv.cdf_P_inv(rv.cdf_P(sample)): %.3f\n",
+               rv.cdf_P_inv(rv.cdf_P(sample)));
+    }
+
+    return 0;
 };
 ```
 
